@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <data>
+
+        <variable name="viewmodel" type="com.example.mvvmexample.data.network.models.Categories" />
+        <variable name="videos" type="com.example.mvvmexample.data.network.models.VideoEntity"
+            />
+
+    </data>
+<RelativeLayout
+    android:id="@+id/rootView2"
+    android:layout_width="120dp"
+    android:layout_height="150dp"
+    android:padding="3dp">
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgItem"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@drawable/loading"
+        android:src="@drawable/loading"
+        android:clickable="true"
+        android:imageURL='@{viewmodel.newCategoryImage != null ? viewmodel.newCategoryImage :  viewmodel.categorythumbImage}'
+
+        app:image='@{videos.newChannelThumbnailPath != null ? videos.newChannelThumbnailPath :  videos.videoImagePath}'
+        android:scaleType="fitXY"
+        android:transitionName="@string/transition_album_cover" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/premium"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_gravity="top|left"
+        android:background="@drawable/premium_tag"
+        android:gravity="left"
+        android:text='@{viewmodel.packageName ?? videos.packageName ?? "Premium"}'
+        android:paddingRight="3dp"
+
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="11sp"
+        android:visibility="gone" />
+
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/live"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+
+        android:background="@drawable/live_back"
+        android:paddingBottom="2dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="2dp"
+        android:text="@string/live"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+
+</RelativeLayout>
+
+</layout>
