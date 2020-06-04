@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +15,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.homeapi.R
 import com.example.homeapi.databinding.SectionFragmentBinding
 import com.example.mvvmexample.data.network.models.Section
+import com.tapmad.webservices.Services.APIRepository
 import com.tapmad.webservices.Services.APIRepositoryProvider
+import com.tapmad.webservices.Services.ApiService
 import com.tapmad.webservices.Services.ServiceGenerator
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -22,11 +25,18 @@ import io.reactivex.schedulers.Schedulers
 class SectionVideosTabFragmentHS : Fragment() {
     var tabName: String = ""
 
+    companion object{
+        var tabId:Int=0
+       /*fun setTabId(tab: Int)
+       {
+          ta
+       }*/
+    }
+
+private lateinit var factory: SectionVideosTabFragmentHViewModelFactory
     private var binding: SectionFragmentBinding?= null
     var sectionEntities: MutableList<Section> = mutableListOf()
-    companion object {
-        fun newInstance() = SectionVideosTabFragmentHS()
-    }
+
 
     private lateinit var viewModel: SectionVideosTabFragmentHViewModel
     lateinit var adapter: RecyclerAdapter
@@ -49,57 +59,33 @@ class SectionVideosTabFragmentHS : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(SectionVideosTabFragmentHViewModel::class.java)
+        val api= ApiService()
+        val repository= APIRepository(api)
+        factory= SectionVideosTabFragmentHViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory).get(SectionVideosTabFragmentHViewModel::class.java)
+
+        Log.d("result", "tab Id is "+tabId+ " tab Name is: "+tabName)
+        viewModel.getTabsDetails(tabId)
+
+        viewModel.tabDetails.observe(viewLifecycleOwner, Observer {
+            if (it.Tabs != null && it.Tabs.size > 0 && it.Tabs.get(0).Sections != null) {
+            adapter.addItems(it.Tabs[0].Sections)
+            adapter.notifyDataSetChanged()}
+        })
 
     }
 
-    fun setSectionEntities(sectionEntities: List<Section>, tabName: String) {
+    fun setSectionEntities(sectionEntities: List<Section>, tabName: String, tabId: Int) {
         if (sectionEntities != null) {
 
             this.sectionEntities.clear();
             this.sectionEntities.addAll(sectionEntities);
             this.tabName = tabName;
+//            this.tabId= tabId
         }
 
     }
 
 
-    fun getHomePageDetailByTabId(tabId: Int, tabPosition: Int) {
-        val repository = APIRepositoryProvider.provideHomeRepository()
-
-        ServiceGenerator.compositeDisposable.add(
-            repository.getHomePageDetailByTabId(
-               "v1",
-                "en",
-               "android",
-                tabId
-            )
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe({ result ->
-Log.d("result", "result in section video is"+result.Tabs)
-                        if (result.Tabs != null && result.Tabs.size > 0 && result.Tabs.get(0).Sections != null) {
-
-//                            for (i in 0 until result.Tabs.get(tabPosition).Sections.size) {
-//                                sectionEntities.add(result.Tabs.get(0).Sections)
-
-                            adapter.addItems(result.Tabs.get(0).Sections)
-
-                         adapter.notifyDataSetChanged()
-
-                        } else {
-
-
-                        }
-                    }
-
-
-                    , { error ->
-                        //                        Toast.makeText(context, R.string.unable_to_load_data, Toast.LENGTH_LONG).show()
-
-
-                    })
-        )
-    }
 
 }

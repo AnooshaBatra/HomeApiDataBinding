@@ -2,6 +2,7 @@ package com.example.homeapi
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -9,14 +10,20 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.example.homeapi.Helper.TabViewPagerAdapter
 import com.example.homeapi.ui.SectionVideosTabFragmentHS
+import com.example.homeapi.ui.SectionVideosTabFragmentHS.Companion.tabId
 import com.example.mvvmexample.data.network.models.Tabs
 import com.google.android.material.tabs.TabLayout
+import com.tapmad.webservices.Services.APIRepository
 import com.tapmad.webservices.Services.APIRepositoryProvider
+import com.tapmad.webservices.Services.ApiService
 import com.tapmad.webservices.Services.ServiceGenerator.Companion.compositeDisposable
 import com.tapmad.webservices.Wrapper.RetrofitWrapper
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), ViewPager.OnPageChangeListener {
     lateinit var adapter: TabViewPagerAdapter
@@ -25,6 +32,9 @@ class MainActivity : AppCompatActivity(), ViewPager.OnPageChangeListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val repository= APIRepository(ApiService())
+
         tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(p0: TabLayout.Tab?) {
 
@@ -49,9 +59,7 @@ class MainActivity : AppCompatActivity(), ViewPager.OnPageChangeListener {
 
         adapter = TabViewPagerAdapter(supportFragmentManager)
 
-        //shimmer_view_container.startShimmer()
 
-        //  homeShimmer.startShimmer()
         loadData()
 
 
@@ -75,9 +83,10 @@ class MainActivity : AppCompatActivity(), ViewPager.OnPageChangeListener {
 
                         for (tab: Tabs in result.Tabs) {
                             fragment = SectionVideosTabFragmentHS()
+
                             adapter.addFragmentAndData(fragment, tab.TabName)
                             if (tab.Sections != null)
-                                (fragment as SectionVideosTabFragmentHS).setSectionEntities(tab.Sections, tab.TabName)
+                                (fragment as SectionVideosTabFragmentHS).setSectionEntities(tab.Sections, tab.TabName, tabId)
 
 
                         adapter.notifyDataSetChanged()
@@ -108,7 +117,7 @@ class MainActivity : AppCompatActivity(), ViewPager.OnPageChangeListener {
 
 
         compositeDisposable.add(observer)
-//        adapter.notifyDataSetChanged()
+
 
 
     }
@@ -124,13 +133,13 @@ class MainActivity : AppCompatActivity(), ViewPager.OnPageChangeListener {
     override fun onPageSelected(position: Int) {
 
         var fragment: Fragment = adapter.getItem(position)
-
-        (fragment as SectionVideosTabFragmentHS).getHomePageDetailByTabId(homeRespone?.Tabs?.get(position)?.TabId!!, position)
+        tabId= homeRespone?.Tabs?.get(position)?.TabId!!
+       /* (fragment as SectionVideosTabFragmentHS).getHomePageDetailByTabId(homeRespone?.Tabs?.get(position)?.TabId!!, position)
         Log.d(
             "result",
             "tab is: " + homeRespone?.Tabs?.get(position)?.TabName + " tab Id is: " + homeRespone?.Tabs?.get(
                 position
-            )?.TabId)
+            )?.TabId)*/
 
 
     }

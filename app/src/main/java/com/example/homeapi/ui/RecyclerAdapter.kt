@@ -34,6 +34,9 @@ class RecyclerAdapter(var context: FragmentActivity, var dataList:MutableList<Se
 
         holder.iview.nestedRecycler.setItemAnimator(DefaultItemAnimator())
         holder.iview.nestedRecycler.adapter= itemListDataAdapter
+        (holder.iview.nestedRecycler.adapter as NestedRecyclerAdapter).notifyDataSetChanged()
+
+
 
     }
     fun addItems(newDataSetItems: MutableList<Section>) {

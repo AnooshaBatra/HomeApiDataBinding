@@ -69,6 +69,7 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="5dp"
         android:clipToPadding="false"
+
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
 
 

@@ -34,6 +34,9 @@ class NestedRecyclerAdapter(var categoriesList: MutableList<Categories>?, var da
         { categoriesEntity = categoriesList?.get(position)
             holder.binding.live.visibility = if (categoriesEntity?.IsVideoChannel!!) View.VISIBLE else View.GONE
 
+           holder.binding.viewmodel= categoriesEntity
+            holder.binding.videos= videoEntity
+
            }//dataList.get(i).getCategories().get(i);
         else{ videoEntity = dataList?.get(position)
             holder.binding.live.visibility=  if (videoEntity.IsVideoChannel || videoEntity.VideoPackageId != 0) View.VISIBLE else View.GONE
