@@ -19,6 +19,7 @@ import com.tapmad.webservices.Services.APIRepository
 import com.tapmad.webservices.Services.APIRepositoryProvider
 import com.tapmad.webservices.Services.ApiService
 import com.tapmad.webservices.Services.ServiceGenerator
+import com.tapmad.webservices.Wrapper.RetrofitWrapper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.kodein.di.KodeinAware
@@ -44,6 +45,7 @@ class SectionVideosTabFragmentHS : Fragment(), KodeinAware {
     private lateinit var viewModel: SectionVideosTabFragmentHViewModel
     lateinit var adapter: RecyclerAdapter
     lateinit var recyclerView: RecyclerView
+    var response:RetrofitWrapper? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,13 +70,23 @@ class SectionVideosTabFragmentHS : Fragment(), KodeinAware {
         viewModel = ViewModelProvider(this, factory).get(SectionVideosTabFragmentHViewModel::class.java)
 
         Log.d("result", "tab Id is "+tabId+ " tab Name is: "+tabName)
-        viewModel.getTabsDetails(tabId)
+        //viewModel.getTabsDetails(tabId)
+        response= viewModel.getDetails(tabId)
 
-        viewModel.tabDetails.observe(viewLifecycleOwner, Observer {
+
+        if(response?.Tabs != null && response?.Tabs?.size!! > 0 && response?.Tabs?.get(0)?.Sections != null)
+        {
+            adapter.addItems(viewModel.homeResponse?.Tabs?.get(0)?.Sections!!)
+            adapter.notifyDataSetChanged()
+            Log.d("resultfRAGMENT", "in fragment result is"+viewModel.homeResponse)
+        }
+
+        //without observable api service call
+      /*  viewModel.tabDetails.observe(viewLifecycleOwner, Observer {
             if (it.Tabs != null && it.Tabs.size > 0 && it.Tabs.get(0).Sections != null) {
             adapter.addItems(it.Tabs[0].Sections)
             adapter.notifyDataSetChanged()}
-        })
+        })*/
 
     }
 

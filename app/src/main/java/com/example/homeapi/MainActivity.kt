@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity(), ViewPager.OnPageChangeListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val repository= APIRepository(ApiService())
+        //val repository= APIRepository(ApiService())
 
         tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(p0: TabLayout.Tab?) {
@@ -73,8 +73,7 @@ class MainActivity : AppCompatActivity(), ViewPager.OnPageChangeListener {
     fun loadData() {
         var fragment: Fragment
         val repository = APIRepositoryProvider.provideHomeRepository()
-        val observer =
-            repository.getHomePageData("v1", "en", "android")
+        val observer = repository.getHomePageData("v1", "en", "android")
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe({ result ->

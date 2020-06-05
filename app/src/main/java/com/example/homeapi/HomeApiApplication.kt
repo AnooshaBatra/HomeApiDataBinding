@@ -18,6 +18,7 @@ class HomeApiApplication: Application(), KodeinAware {
         import(androidXModule(this@HomeApiApplication))
         bind() from singleton { ApiService() }
         bind() from singleton { APIRepository(instance()) }
+
         bind() from provider { SectionVideosTabFragmentHViewModelFactory(instance()) }
 
 

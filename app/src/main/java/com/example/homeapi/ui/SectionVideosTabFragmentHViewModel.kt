@@ -1,14 +1,24 @@
 package com.example.homeapi.ui
 
+import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.tapmad.webservices.Services.APIRepository
+import com.tapmad.webservices.Services.APIRepositoryProvider
+import com.tapmad.webservices.Services.ServiceGenerator
 import com.tapmad.webservices.Wrapper.RetrofitWrapper
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Job
 
 class SectionVideosTabFragmentHViewModel(val repository:APIRepository) : ViewModel() {
    private val _tabs= MutableLiveData<RetrofitWrapper>()
+    var homeResponse: RetrofitWrapper?= null
+
+
 
     private val _tabDetails=  MutableLiveData<RetrofitWrapper>()
 private lateinit var job: Job
@@ -34,6 +44,30 @@ private lateinit var job: Job
             {    _tabDetails.value = it} )
     }
 
+
+    fun getDetails(tabId:Int): RetrofitWrapper?
+    {
+        Log.d("result", "in getDetails()")
+        val repo= APIRepositoryProvider.provideHomeRepository()
+
+        val observer =  repo.getHomePageDetailByTabId("v1", "en", "android", tabId)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe({ result ->
+                homeResponse= result
+                Log.d("result", "in getDetails() result is"+homeResponse)
+            },
+                { error ->
+                    Log.d("error",error.message)
+                    //Toast.makeText(,"unable to load data", Toast.LENGTH_LONG).show();
+
+                })
+
+
+        ServiceGenerator.compositeDisposable.add(observer)
+
+        return homeResponse
+    }
     override fun onCleared() {
         super.onCleared()
         if(::job.isInitialized) job.cancel()
