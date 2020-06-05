@@ -18,7 +18,9 @@ class SectionVideosTabFragmentHViewModel(val repository:APIRepository) : ViewMod
    private val _tabs= MutableLiveData<RetrofitWrapper>()
     var homeResponse: RetrofitWrapper?= null
 
-
+    private val _home=  MutableLiveData<RetrofitWrapper>()
+    val homes: MutableLiveData<RetrofitWrapper>
+        get() = _home
 
     private val _tabDetails=  MutableLiveData<RetrofitWrapper>()
 private lateinit var job: Job
@@ -45,15 +47,18 @@ private lateinit var job: Job
     }
 
 
-    fun getDetails(tabId:Int): RetrofitWrapper?
+    fun getDetails(tabId:Int)
     {
         Log.d("result", "in getDetails()")
+        job = Coroutines.ioTheMain(
+            {
         val repo= APIRepositoryProvider.provideHomeRepository()
 
         val observer =  repo.getHomePageDetailByTabId("v1", "en", "android", tabId)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe({ result ->
+                _home.value= result
                 homeResponse= result
                 Log.d("result", "in getDetails() result is"+homeResponse)
             },
@@ -64,9 +69,10 @@ private lateinit var job: Job
                 })
 
 
-        ServiceGenerator.compositeDisposable.add(observer)
+        ServiceGenerator.compositeDisposable.add(observer)}, {//_home.value= homeResponse
+                 })
 
-        return homeResponse
+
     }
     override fun onCleared() {
         super.onCleared()

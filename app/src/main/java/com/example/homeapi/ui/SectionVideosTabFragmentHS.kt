@@ -71,22 +71,16 @@ class SectionVideosTabFragmentHS : Fragment(), KodeinAware {
 
         Log.d("result", "tab Id is "+tabId+ " tab Name is: "+tabName)
         //viewModel.getTabsDetails(tabId)
-        response= viewModel.getDetails(tabId)
+       viewModel.getDetails(tabId)
+
+        Log.d("resultfRAGMENT", "response is "+response)
 
 
-        if(response?.Tabs != null && response?.Tabs?.size!! > 0 && response?.Tabs?.get(0)?.Sections != null)
-        {
-            adapter.addItems(viewModel.homeResponse?.Tabs?.get(0)?.Sections!!)
-            adapter.notifyDataSetChanged()
-            Log.d("resultfRAGMENT", "in fragment result is"+viewModel.homeResponse)
-        }
-
-        //without observable api service call
-      /*  viewModel.tabDetails.observe(viewLifecycleOwner, Observer {
-            if (it.Tabs != null && it.Tabs.size > 0 && it.Tabs.get(0).Sections != null) {
+       viewModel.homes.observe(viewLifecycleOwner, Observer {
+            if (it!= null && it.Tabs != null && it.Tabs.size > 0 && it.Tabs.get(0).Sections != null) {
             adapter.addItems(it.Tabs[0].Sections)
             adapter.notifyDataSetChanged()}
-        })*/
+        })
 
     }
 
