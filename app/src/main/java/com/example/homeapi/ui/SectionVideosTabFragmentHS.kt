@@ -21,19 +21,22 @@ import com.tapmad.webservices.Services.ApiService
 import com.tapmad.webservices.Services.ServiceGenerator
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.kodein
+import org.kodein.di.generic.instance
 
-class SectionVideosTabFragmentHS : Fragment() {
+class SectionVideosTabFragmentHS : Fragment(), KodeinAware {
+
+    override val kodein by kodein()
+    private val factory: SectionVideosTabFragmentHViewModelFactory by instance()
     var tabName: String = ""
 
     companion object{
         var tabId:Int=0
-       /*fun setTabId(tab: Int)
-       {
-          ta
-       }*/
+
     }
 
-private lateinit var factory: SectionVideosTabFragmentHViewModelFactory
+//private lateinit var factory: SectionVideosTabFragmentHViewModelFactory
     private var binding: SectionFragmentBinding?= null
     var sectionEntities: MutableList<Section> = mutableListOf()
 
@@ -59,9 +62,9 @@ private lateinit var factory: SectionVideosTabFragmentHViewModelFactory
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val api= ApiService()
+        /*val api= ApiService()
         val repository= APIRepository(api)
-        factory= SectionVideosTabFragmentHViewModelFactory(repository)
+        factory= SectionVideosTabFragmentHViewModelFactory(repository)*/
         viewModel = ViewModelProvider(this, factory).get(SectionVideosTabFragmentHViewModel::class.java)
 
         Log.d("result", "tab Id is "+tabId+ " tab Name is: "+tabName)
